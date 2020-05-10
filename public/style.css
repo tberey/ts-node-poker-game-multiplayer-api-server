@@ -1,0 +1,135 @@
+/* Client Page Styling */
+body {
+    margin: 2px;
+    background-color: rgba(237, 215, 245, 0.658);
+}
+
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+}
+
+h1 {
+    font-family: 'Pacifico', serif;
+    margin-bottom: -0.1em;
+    margin-top: -0.1em;
+    text-align: center;
+}
+
+td {
+    border: 2px solid #dddddd;
+    text-align: center;
+    padding: 6px;
+}
+
+tr:nth-child(odd) {
+    background-color: #0634ff62;
+}
+
+tr:nth-child(even) {
+    background-color: #0213615d;
+}
+
+.collapse {
+    display: none;
+}
+
+.passUserInputs {
+    width: 90%;
+    margin-bottom: 2px;
+}
+
+.flex {
+    display: flex;
+    width: 98vw;
+    margin-bottom: 3px;
+}
+
+#flex1 {
+    height: 54vh;
+    min-height: 230px;
+    font-family: 'Comfortaa', serif;
+}
+
+#usersSection {
+    flex: 1;
+    background-color:rgb(106, 215, 223) ;
+    border: 3px solid rgb(19, 0, 128);
+    overflow: visible;
+    min-width: 155px;
+}
+
+#outputForm {
+    flex: 4;
+    background-color:rgb(101, 245, 214);
+    border: 3px solid rgb(19, 0, 128);
+    margin-right: 3px;
+    overflow: visible;
+}
+
+#messagingSection {
+    flex: 1;
+    padding: 2px;
+    background-color:rgba(30, 160, 106, 0.801) ;
+    border: 3px solid rgb(1, 44, 16);
+    overflow: visible;
+}
+
+#message {
+    width: 75%;
+}
+
+#accountSection {
+    width: 305px;
+    height: 275px;
+    background-color:rgb(255, 200, 175) ;
+    border: 3px solid rgb(128, 26, 0);
+    overflow-y: scroll;
+    font-family: 'Marcellus SC', serif;
+}
+
+#chatroom {
+    width: 98%;
+    margin-left: 1%;
+    margin-top: 1%;
+    height: 93%;
+    overflow-y: scroll;
+    background-color:rgb(165, 245, 158);
+}
+
+#submit-message {
+    width: 58px;
+    font-size: small;
+}
+
+#account-info {
+    font-size: small;
+    text-align: center;
+}
+
+#submit-logout {
+    position: relative;
+    left: 35%;
+}
+
+#update-username {
+    background-color: #3b4efc9a;
+}
+
+#update-password {
+    background-color: #fc3b3b9a;
+}
+
+#prompt {
+    position: relative;
+    left: 29%;
+    font-size: small;
+}
+
+#collapse-user {
+    background-color: #3b4efc9a;
+}
+
+#collapse-pass {
+    background-color: #fc3b3b9a;;
+}

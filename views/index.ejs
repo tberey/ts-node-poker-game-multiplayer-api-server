@@ -1,0 +1,103 @@
+<!-- Client served Login/Register Page. -->
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Poker - New Player</title>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Pacifico">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lobster">
+        <style>
+            body {
+                background-color: rgba(237, 215, 245, 0.658);
+            }
+            form {
+                border: 3px solid #0398b3;
+                text-align: center;
+                width: 100%;
+                background-color:#00ffc831;
+                font-family: 'Lobster', serif;
+            }
+            p {
+                text-align: center;
+            }
+            input[type=text], input[type=password] {
+                width: 60%;
+                padding: 12px 20px;
+                margin: 8px 0;
+                display: inline-block;
+                border: 1.5px solid rgb(21, 75, 0);
+                box-sizing: border-box;
+            }
+            button {
+                color: white;
+                padding: 14px 20px;
+                margin: 8px 0;
+                border: none;
+                cursor: pointer;
+                width: 60%;
+                max-width: 500px;
+                display: inline-block;
+            }
+            #submit-register {
+                background-color: rgb(20, 103, 114);
+            }
+            #submit-login {
+                background-color: rgb(1, 107, 4);
+            }
+            button:hover {
+                opacity: 0.7;
+            }
+            .container {
+                padding: 16px;
+            }
+        </style>
+    </head>
+    <body>
+        <h2 style="font-family:'Pacifico';">Welcome to Poker 1.0</h2>
+        <form>
+            <h3>Join a Poker game...</h3>
+            <div class="container" style="background-color:#00ff557a">
+                <input type="text" placeholder="Enter a Name" name="username" id="uname" required><br>
+                <button type="button" id="submit-login">Join</button>
+            </div>
+        </form>
+        <div>
+            <p id="login-msg"></p>
+        </div>
+        <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+        <script>
+
+            //Global Space
+            let username = $('#uname');
+            let msg = $('#login-msg');
+            
+            // Font random color assignment, for login screen animations.
+            const randomColor = (colors = ['red','blue','green','orange','purple','black','orangered']) => {return colors[Math.floor(Math.random() * colors.length)]};
+            setInterval(() => $(document.body).css('color', randomColor()) , 2500);
+
+            // Listen for the login button being clicked, to login and redirect.
+            $('#submit-login').on('click', () => {
+                if (username.val() != '') {
+                    // POST Request, to login with an existing user and either return a resulting message, or redirect to the chatroom.
+                    $.ajax({
+                        url:'login',
+                        method:'POST',
+                        data: {
+                            username: username.val()
+                        },
+                        success:(response) => {
+                            msg.html(response);
+                            if (response.indexOf('/poker') > -1) window.location.pathname = response;
+                        },
+                        error:(err) => msg.html(err.responseText)
+                    });
+                    // Clear input fields after capturing their values for data sent with POST Request.
+                    username.val('');
+                } else {
+                    msg.html("<p>Enter a username.</p>");
+                }
+            });     
+        </script>
+    </body>
+</html>

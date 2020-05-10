@@ -1,0 +1,72 @@
+<!-- Served Client Page -->
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <!-- Metadata -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>ChatRoom</title>
+    <meta name="author" content="Tom B">
+    <meta name="description" content="">
+
+    <!-- Stylesheet and client dependancy CDN remote Script. -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Comfortaa">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Caveat">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Pacifico">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Marcellus+SC">
+    <link rel="stylesheet" type="text/css" href="style.css">
+  </head>
+
+  <!-- Main Document Body. -->
+  <body>
+    <h1 id="h1-title">Poker 1.0</h1>
+
+    <div class="flex" id="flex1">
+      <div id="outputForm">
+        <section id="gameTable"></section>
+      </div>
+
+      <div id="PlayersSection">
+        <h2>Players List:</h2>
+        <table><nav id="tableStart"></nav></table>
+      </div>
+    </div>
+
+    <div class="flex" id="flex2">
+    <div id="controlsSection">
+      <button id="submit-message" type="button">Check/Call</button>
+      <button id="submit-message" type="button">Bet</button>
+      <button id="submit-message" type="button">Fold</button>
+    </div>
+    </div>
+
+    <!-- Scripting -->
+    <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+    <script>
+      $(() => {
+        let chatroom = $('#gameTable');
+        let userList = $('#tableStart'); // Display data element.
+
+        var port = (window.location.href).replace(/\D/g,'');
+        const socket = io.connect(`http://localhost:${port}`);
+        socket.emit('allMessages'); // Get existing messages.
+
+        // Listen for delete user list signal to clear html, in preparation for a new list emitted. Append received data as a msg to html.
+        socket.on('deleteList', (data) => {
+            userList.html('');
+            if (data) chatroom.append(`<p class="message"><b>Server says:</b><br><i>${data}</i></p>`);
+            // Set scroll to bottom of appended element on new message.
+            $('#chatroom').scrollTop($('#chatroom').prop('scrollHeight'));
+        });
+
+        // Listen for the user list items to be emitted by server on connection, and append to html.
+        socket.on('userListItem', (data) => userList.append(`<tr><td>${data}</td></tr>`));
+
+        socket.emit('newGame');
+      });
+    </script>
+  </body> 
+</html>
