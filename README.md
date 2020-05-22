@@ -4,14 +4,16 @@
 
 ### <i> Login and join the Poker table, presented in real-time and dynamically updated to all users.
 
-***
 <br>
+
+***
 
 ###### Client Page (Front-End) Homepage: <br>
 #### <b>http://localhost:<Port\>/</b>
 
 ***
-<br>
+
+<br><i>
 
 |Version| Changes|
 |:---|:---|
