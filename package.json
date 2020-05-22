@@ -1,5 +1,5 @@
 {
-  "name": "ts-node-poker-game",
+  "name": "ts-node-poker-game-multiplayer-api-server",
   "version": "1.0.0",
   "description": "",
   "main": "build/index.js",

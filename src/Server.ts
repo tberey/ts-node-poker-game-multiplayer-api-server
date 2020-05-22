@@ -9,27 +9,27 @@ export class Server {
 
     protected app: Express;
     private server: http.Server;
-    private port: string;
+    private port: number;
     protected io:SocketIOServer.Server;
     private sessionMiddleware:express.RequestHandler;
     
     
     constructor(port:number) {
-        this.port = process.env.PORT || port.toString();
+        this.port = port;
         this.app = express();
         this.server = new http.Server(this.app);
         this.io = SocketIOServer(this.server,);
         this.sessionMiddleware = session({
             secret: privateData.sessionSecret,
-            saveUninitialized: false,
-            resave: false
+            saveUninitialized: true,
+            resave: true
         })
         this.otherServerSetup();
         this.startServer();
     }
 
     private startServer():void {
-        this.server.listen(this.port, () => {
+        this.server.listen(this.port, '0.0.0.0', () => {
             console.log( `Server has started at http://localhost:${this.port}/` );
         });
     }

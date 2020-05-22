@@ -1,27 +1,16 @@
 # Poker Room & Table Browser App: (TypeScript + Node.js)
 
-
-***
-
-
 ## An online multiplayer Poker game, presented on a hosted http REST API, made in Typescript and Node, with Express and Socket.IO frameworks.
 
 ### <i> Login and join the Poker table, presented in real-time and dynamically updated to all users.
 
-<br>
-
 ***
+<br>
 
 ### Client Page (Front-End) Homepage: <br>
 #### <b>http://localhost:<Port\>/</b>
 
 ***
-
-<br>
-
-***
-***
-
 <br>
 
 |Version| Changes|

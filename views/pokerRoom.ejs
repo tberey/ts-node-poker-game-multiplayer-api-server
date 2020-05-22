@@ -6,7 +6,7 @@
     <!-- Metadata -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>ChatRoom</title>
+    <title>Poker Table</title>
     <meta name="author" content="Tom B">
     <meta name="description" content="">
 
@@ -22,7 +22,8 @@
   <!-- Main Document Body. -->
   <body>
     <h1 id="h1-title">Poker 1.0</h1>
-
+    <button id="ALLSTART" type="button">ALLSTART</button>
+    
     <div class="flex" id="flex1">
       <div id="outputForm">
         <section id="gameTable"></section>
@@ -34,13 +35,37 @@
       </div>
     </div>
 
-    <div class="flex" id="flex2">
-    <div id="controlsSection">
-      <button id="submit-message" type="button">Check/Call</button>
-      <button id="submit-message" type="button">Bet</button>
-      <button id="submit-message" type="button">Fold</button>
+    <div>
+      <div id="controlsSection">
+        <button id="submit-play" type="button">Check/Call</button>
+        <button id="submit-fold" type="button">Fold</button>
+        <button id="submit-bet" type="button">Bet</button>
+        <input type="text" placeholder="Enter an amount to bet." value="0" name="betAmount" id="betInput">
+        
+      </div>
     </div>
+
+    
+    <div class="flex-container" style="border: 1px;border-color: red;">
+      <div id="player0">1</div>
+      <div id="player1">2</div>
+      <div id="player2">3</div>
+      <div id="player3">4</div>
+      <div id="player4">5</div>
+      <div id="player5">6</div>
+      <div id="player6">7</div>
+      <div id="player7">8</div>
+      <div id="yourCards">Your Cards</div>
     </div>
+    <div class="flex-container" style="border: 1px;border-color: red;">
+      <div id="card0">C1</div>
+      <div id="card1">C2</div>
+      <div id="card2">C3</div>
+      <div id="card3">C4</div>
+      <div id="card4">C5</div>
+      <div id="pot">Pot</div>
+    </div>
+    
 
     <!-- Scripting -->
     <script src="http://code.jquery.com/jquery-latest.min.js"></script>
@@ -49,23 +74,170 @@
       $(() => {
         let chatroom = $('#gameTable');
         let userList = $('#tableStart'); // Display data element.
+        let playButton = $('#submit-play');
+        let betButton = $('#submit-bet');
+        let foldButton = $('#submit-fold');
+        let aLLSTART = $('#ALLSTART');
+        let pot = $('#pot');
+        let adm = false;
+        let username;
+        let playerMoney;
 
-        var port = (window.location.href).replace(/\D/g,'');
-        const socket = io.connect(`http://localhost:${port}`);
+
+        playButton.prop('disabled', true);
+        betButton.prop('disabled', true);
+        foldButton.prop('disabled', true);
+        $('#betInput').prop('disabled', true);
+
+        //var port = (window.location.href).replace(/\D/g,'');
+        //console.log(window.location.href);
+        const socket = io.connect('http://192.168.1.131:8008');
+        //const socket = io.connect('http://86.153.216.62');
+        //const socket = io.connect(window.location.href); // `http://localhost:${port}`
+        
+
         socket.emit('allMessages'); // Get existing messages.
+
 
         // Listen for delete user list signal to clear html, in preparation for a new list emitted. Append received data as a msg to html.
         socket.on('deleteList', (data) => {
             userList.html('');
-            if (data) chatroom.append(`<p class="message"><b>Server says:</b><br><i>${data}</i></p>`);
+            if (data) chatroom.append(`<p class="message"><br><i>${data}</i></p>`);
             // Set scroll to bottom of appended element on new message.
-            $('#chatroom').scrollTop($('#chatroom').prop('scrollHeight'));
+            $('#gameTable').scrollTop($('#gameTable').prop('scrollHeight'));
         });
 
-        // Listen for the user list items to be emitted by server on connection, and append to html.
-        socket.on('userListItem', (data) => userList.append(`<tr><td>${data}</td></tr>`));
 
-        socket.emit('newGame');
+        // Listen for the user list items to be emitted by server on connection, and append to html.
+        socket.on('userListItem', data => userList.append(`<tr><td>${data}</td></tr>`));
+
+
+        socket.on('adminCheck', (data=false) => adm=data);
+        
+
+        aLLSTART.click(() => {
+            if (adm) socket.emit('newGame');
+        });
+
+        
+        socket.on('yourUser', data => {
+          username = data;
+        });
+
+        socket.on('yourMoney', data => {
+          console.log('data: ' + data);
+          playerMoney = parseInt(data);
+        });
+
+
+        socket.on('initGameData', data => {
+          //console.log(JSON.stringify(data));
+          
+          data.forEach(element => {
+            if (element.name == username) {
+              $('#yourCards').html(`
+              <nav style="font-size:x-small">Your Cards: 
+                <nav>${element.hand[0].number} of ${element.hand[0].suit}</nav>
+                <nav>${element.hand[1].number} of ${element.hand[1].suit}</nav>
+              </nav>
+              `);
+            }
+          });
+
+          for (let i=0; i < data.length; i++) {
+            $(`#player${i}`).html(`
+            <nav style="font-size:x-small">
+              <nav>${data[i].name}</nav>
+              <nav id="moneys" value="${data[i].money}">£${data[i].money}</nav>
+              <nav>Your Turn? ${data[i].turn}</nav>
+              <nav>Out? ${data[i].out}</nav>
+              <nav>Dealer? ${data[i].dealer}</nav>
+            </nav>
+            `);
+          }
+
+          $('#pot').html(`<nav style="font-size:x-small"><nav>Total Pot: £${0}</nav>`);
+
+        });
+
+
+        socket.on('playerTurnUpdate', data => {
+          chatroom.append(`<p class="message"><br><i>It is ${data.name}'s turn.</i></p>`);
+          $('#gameTable').scrollTop($('#gameTable').prop('scrollHeight'));
+
+          if (data.name == username) {
+            playButton.prop('disabled', false);
+            if (!data.lastPlayerBet) {
+              betButton.prop('disabled', false);
+              $('#betInput').prop('disabled', false);
+            }
+            foldButton.prop('disabled', false);
+            //urTurn = true;
+          } else {
+            playButton.prop('disabled', true);
+            betButton.prop('disabled', true);
+            foldButton.prop('disabled', true);
+            $('#betInput').prop('disabled', true);
+            //urTurn = false;
+          }
+        });
+
+
+        socket.on('messageUpdate', data => {
+          chatroom.append(data);
+          $('#gameTable').scrollTop($('#gameTable').prop('scrollHeight'));
+        });
+
+
+        foldButton.click(() => {
+          socket.emit('fold', username);
+          socket.emit('nextTurn', username);
+        });
+
+
+        betButton.click(() => {
+          console.log(playerMoney, ($('#betInput').val()));
+          if (parseInt($('#betInput').val()) < playerMoney && parseInt($('#betInput').val()) > 0) {
+            
+            socket.emit('bet', [username, parseInt($('#betInput').val())]);
+            socket.emit('nextTurn', username);
+
+          } else if ($('#betInput').value == playerMoney && $('#betInput').value > 0) { 
+            
+            console.log('ALL IN');
+
+          } else {
+
+            alert("Invalid amount.");
+          }
+        });
+
+        betButton.click(() => {
+          console.log(playerMoney, ($('#betInput').val()));
+          if (parseInt($('#betInput').val()) < playerMoney && parseInt($('#betInput').val()) > 0) {
+            
+            socket.emit('bet', [username, parseInt($('#betInput').val())]);
+            socket.emit('nextTurn', username);
+
+          } else if ($('#betInput').value == playerMoney && $('#betInput').value > 0) { 
+            
+            console.log('ALL IN');
+
+          } else {
+
+            alert("Invalid amount.");
+          }
+        });
+
+        playButton.click(() => {
+          socket.emit('checkOrCall', username);
+          socket.emit('nextTurn', username);
+        });
+
+        socket.on('updatePot', potAmount => {
+          pot.html(`<p>Pot:<br>£${potAmount}</p>`);
+        });
+
       });
     </script>
   </body> 

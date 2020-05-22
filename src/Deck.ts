@@ -62,7 +62,7 @@ export class Deck {
 
         // Suffle the completed, ordered deck.
         let tmpCard:Card;
-        for (let i:number = 0; i < 999; i++){
+        for (let i:number = 0; i < 12000; i++){
             for (let c:number = 0; c < this.cards.length; c++) {
                 let rndNo:number = Math.floor(Math.random() * this.cards.length);
                 tmpCard = this.cards[c];
@@ -76,5 +76,9 @@ export class Deck {
     public dealCard() {
         let newCard = new Card('0','0');
         return this.cards.pop() || newCard;
+    }
+
+    public length():number {
+        return this.cards.length;
     }
 }
